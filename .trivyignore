@@ -19,3 +19,11 @@ CVE-2026-13221
 CVE-2026-57433 
 CVE-2025-47273
 GHSA-6v7p-g79w-8964
+
+# CVE-2026-76642 and CVE-2026-78410 affect util-linux packages inherited
+# from the base image. No fixed Debian package is currently available.
+# Re-evaluate when the base image publishes patched packages.
+CVE-2026-76642
+CVE-2026-78410
+
+
