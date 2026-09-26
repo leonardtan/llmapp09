@@ -1,10 +1,33 @@
 """
 Shared fixtures and configuration for deepeval LLM evaluation tests.
+Configured to use Ollama Cloud API as the evaluation LLM judge.
 """
 
+import os
 import pytest
 from deepeval.metrics import GEval
+from deepeval.models import OpenAIModel
 from deepeval.test_case import LLMTestCaseParams
+
+# ---------------------------------------------------------------------------
+# Ollama Evaluation Model Configuration
+# ---------------------------------------------------------------------------
+
+OLLAMA_API_KEY = os.getenv(
+    "OLLAMA_API_KEY", "9631a3972df34aba9bb27acc7f709b24.s4SOSjZLrR3PhuRaXerzvjgA"
+)
+_raw_base_url = os.getenv("OLLAMA_BASE_URL", "https://ollama.com")
+OLLAMA_BASE_URL = (
+    _raw_base_url if _raw_base_url.endswith("/v1") or _raw_base_url.endswith("/v1/")
+    else f"{_raw_base_url.rstrip('/')}/v1"
+)
+OLLAMA_EVAL_MODEL = os.getenv("OLLAMA_EVAL_MODEL", "glm-5.3-flash")
+
+eval_model = OpenAIModel(
+    model=OLLAMA_EVAL_MODEL,
+    base_url=OLLAMA_BASE_URL,
+    api_key=OLLAMA_API_KEY,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -25,6 +48,7 @@ def json_schema_metric(schema_description: str):
             LLMTestCaseParams.ACTUAL_OUTPUT,
         ],
         threshold=0.5,
+        model=eval_model,
     )
 
 
@@ -42,6 +66,7 @@ def output_correctness_metric():
             LLMTestCaseParams.ACTUAL_OUTPUT,
         ],
         threshold=0.5,
+        model=eval_model,
     )
 
 
@@ -64,4 +89,5 @@ def answer_relevancy_metric():
             LLMTestCaseParams.ACTUAL_OUTPUT,
         ],
         threshold=0.5,
+        model=eval_model,
     )
